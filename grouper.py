@@ -261,18 +261,22 @@ class Group:
 
     def __init__(self, members: List[Student]) -> None:
         """ Initialize a group with members <members> """
-        # TODO: complete the body of this method
+        self._members = members
 
     def __len__(self) -> int:
         """ Return the number of members in this group """
-        # TODO: complete the body of this method
+        return len(self._members)
 
     def __contains__(self, member: Student) -> bool:
         """
         Return True iff this group contains a member with the same id
         as <member>.
         """
-        # TODO: complete the body of this method
+        for m in self._members:
+            if m.id == member.id:
+                return True
+
+        return False
 
     def __str__(self) -> str:
         """
@@ -281,13 +285,13 @@ class Group:
 
         You can choose the precise format of this string.
         """
-        # TODO: complete the body of this method
+        return f"{[m.name for m in self._members]}"
 
     def get_members(self) -> List[Student]:
         """ Return a list of members in this group. This list should be a
         shallow copy of the self._members attribute.
         """
-        # TODO: complete the body of this method
+        return self._members[0:len(self)]
 
 
 class Grouping:
@@ -306,11 +310,11 @@ class Grouping:
 
     def __init__(self) -> None:
         """ Initialize a Grouping that contains zero groups """
-        # TODO: complete the body of this method
+        self._groups = list()
 
     def __len__(self) -> int:
         """ Return the number of groups in this grouping """
-        # TODO: complete the body of this method
+        return len(self._groups)
 
     def __str__(self) -> str:
         """
@@ -320,7 +324,7 @@ class Grouping:
 
         You can choose the precise format of this string.
         """
-        # TODO: complete the body of this method
+        return "\n".join([str(g) for g in self._groups])
 
     def add_group(self, group: Group) -> bool:
         """
@@ -329,14 +333,14 @@ class Grouping:
         Iff adding <group> to this grouping would violate a representation
         invariant don't add it and return False instead.
         """
-        # TODO: complete the body of this method
+        self._groups.append(group)
 
     def get_groups(self) -> List[Group]:
         """ Return a list of all groups in this grouping.
         This list should be a shallow copy of the self._groups
         attribute.
         """
-        # TODO: complete the body of this method
+        return self._groups[0:len(self)]
 
 
 if __name__ == '__main__':
