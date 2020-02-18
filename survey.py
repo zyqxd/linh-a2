@@ -400,23 +400,26 @@ class Survey:
         This new survey should use a HomogeneousCriterion as a default criterion
         and should use 1 as a default weight.
         """
-        self._question = question
-        self._criteria = criteria
-        self._weights = weights
-        self._default_criterion = HomogeneousCriterion
+        self._questions = questions
+        self._default_criterion = HomogeneousCriterion()
         self._default_weight = 1
+        self._criteria = dict()
+        self._weights = dict()
 
 
     def __len__(self) -> int:
         """ Return the number of questions in this survey """
-        return len(self.question)
+        return len(self._questions)
 
     def __contains__(self, question: Question) -> bool:
         """
         Return True iff there is a question in this survey with the same
         id as <question>.
         """
-        # TODO: complete the body of this method
+        for q in self._questions:
+            if q.id == question.id:
+                return True
+        return False
 
     def __str__(self) -> str:
         """
@@ -425,11 +428,11 @@ class Survey:
 
         You can choose the precise format of this string.
         """
-        # TODO: complete the body of this method
+        return '\n'.join([str(q) for q in self._questions])
 
     def get_questions(self) -> List[Question]:
         """ Return a list of all questions in this survey """
-        # TODO: complete the body of this method
+        return self._questions
 
     def _get_criterion(self, question: Question) -> Criterion:
         """
@@ -441,7 +444,14 @@ class Survey:
         === Precondition ===
         <question>.id occurs in this survey
         """
-        # TODO: complete the body of this method
+        return self._criteria.get(question.id, self._default_criterion)
+
+    def has_question(self, question: Question) -> bool:
+        # TODO(linh): Add test
+        for q in self._questions:
+            if q.id == question.id:
+                return True
+        return False
 
     def _get_weight(self, question: Question) -> int:
         """
@@ -453,7 +463,7 @@ class Survey:
         === Precondition ===
         <question>.id occurs in this survey
         """
-        # TODO: complete the body of this method
+        return self._weights.get(question.id, self._default_weight)
 
     def set_weight(self, weight: int, question: Question) -> bool:
         """
@@ -462,7 +472,11 @@ class Survey:
         If <question>.id does not occur in this survey, do not set the <weight>
         and return False instead.
         """
-        # TODO: complete the body of this method
+        if self.has_question(question):
+            self._weights[question.id] = weight
+            return True
+        else:
+            return False
 
     def set_criterion(self, criterion: Criterion, question: Question) -> bool:
         """
@@ -472,7 +486,11 @@ class Survey:
         If <question>.id does not occur in this survey, do not set the <weight>
         and return False instead.
         """
-        # TODO: complete the body of this method
+        if self.has_question(question):
+            self._criteria[question.id] = criterion
+            return True
+        else:
+            return False
 
     def score_students(self, students: List[Student]) -> float:
         """
@@ -495,7 +513,21 @@ class Survey:
         All students in <students> have an answer to all questions in this
             survey
         """
-        # TODO: complete the body of this method
+
+        # TODO Catch error thrown by criteria classes
+
+        sum_score = 0
+        count = 0
+
+        for q in self._questions:
+            criterion = self._get_criterion(q)
+            weight = self._get_weight(q)
+            answers = [st.get_answer(q) for st in students]
+            score = criterion.score_answers(q, answers)
+            sum_score += score * weight
+            count += 1
+
+        return sum_score / count
 
     def score_grouping(self, grouping: Grouping) -> float:
         """ Return a score for <grouping> calculated based on the answers of
@@ -513,7 +545,13 @@ class Survey:
         All students in the groups in <grouping> have an answer to all questions
             in this survey
         """
-        # TODO: complete the body of this method
+        score = 0
+        count = 0
+        for group in grouping.get_groups():
+            score += self.score_students(group.get_members())
+            count += 1
+
+        return score / count
 
 
 if __name__ == '__main__':
