@@ -49,7 +49,8 @@ def slice_list(lst: List[Any], n: int) -> List[List[Any]]:
     >>> slice_list(['a', 1, 6.0, False], 3) == [['a', 1, 6.0], [False]]
     True
     """
-    # TODO: complete the body of this function
+    n = max(1, n)
+    return [lst[i:i+n] for i in range(0, len(lst), n)]
 
 
 def windows(lst: List[Any], n: int) -> List[List[Any]]:
@@ -66,7 +67,7 @@ def windows(lst: List[Any], n: int) -> List[List[Any]]:
     >>> windows(['a', 1, 6.0, False], 3) == [['a', 1, 6.0], [1, 6.0, False]]
     True
     """
-    # TODO: complete the body of this function
+    return [lst[i:i+n] for i in range(0, len(lst)) if i+n <= len(lst)]
 
 
 class Grouper:
@@ -90,7 +91,7 @@ class Grouper:
         === Precondition ===
         group_size > 1
         """
-        # TODO: complete the body of this method
+        self.group_size = group_size
 
     def make_grouping(self, course: Course, survey: Survey) -> Grouping:
         """ Return a grouping for all students in <course> using the questions
@@ -128,7 +129,13 @@ class AlphaGrouper(Grouper):
 
         Hint: the sort_students function might be useful
         """
-        # TODO: complete the body of this method
+        sorted_students = sort_students(course.students, 'name')
+        grouped_students = slice_list(sorted_students, self.group_size)
+        grouping = Grouping();
+        for group in grouped_students:
+           grouping.add_group(Group(group))
+
+        return grouping
 
 
 class RandomGrouper(Grouper):
@@ -156,7 +163,14 @@ class RandomGrouper(Grouper):
         members if that is required to make sure all students in <course> are
         members of a group.
         """
-        # TODO: complete the body of this method
+        students = list(course.get_students())
+        random.shuffle(students)
+        grouped_students = slice_list(students, self.group_size)
+        grouping = Grouping();
+        for group in grouped_students:
+           grouping.add_group(Group(group))
+
+        return grouping
 
 
 class GreedyGrouper(Grouper):
@@ -198,8 +212,36 @@ class GreedyGrouper(Grouper):
         The final group created may have fewer than N members if that is
         required to make sure all students in <course> are members of a group.
         """
-        # TODO: complete the body of this method
+        students_list = list(course.get_students())
+        return_grouping = Grouping()
+        print(f'students = {students_list}')
+        print(f'group_size = {self.group_size}')
 
+        while len(students_list) > 0:
+            st = students_list.pop(0)
+            print(f'poping {st} from list')
+            group_students = [st]
+
+            for i in range(1, self.group_size):
+                print(f'running inner for loop {i}')
+                # Find a list of tuples of (student, score) from left over
+                scores = [(other_st, survey.score_students(group_students + [other_st]))
+                            for j, other_st in enumerate(students_list)]
+                print([(st.id, score) for (st, score) in scores])
+
+                # Find max student
+                (max_st, max_score) = max(scores, key=lambda item:item[1])
+                print(max_score)
+
+                # Then add it (also remove from original list)
+
+                students_list.remove(max_st)
+                group_students.append(max_st)
+
+            print(f'final group {[st.id for st in group_students]}')
+            return_grouping.add_group(Group(group_students))
+
+        return return_grouping
 
 class WindowGrouper(Grouper):
     """

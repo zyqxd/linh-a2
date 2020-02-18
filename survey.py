@@ -516,16 +516,23 @@ class Survey:
 
         # TODO Catch error thrown by criteria classes
 
+        print(f'getting score for {[st.id for st in students]}')
         sum_score = 0
         count = 0
 
         for q in self._questions:
+            print('=======')
             criterion = self._get_criterion(q)
             weight = self._get_weight(q)
+            print(f'criterion = {criterion}')
             answers = [st.get_answer(q) for st in students]
             score = criterion.score_answers(q, answers)
             sum_score += score * weight
             count += 1
+
+            print(f'score = {score}')
+            print(f'weight = {weight}')
+            print(f'sum_score = {sum_score}')
 
         return sum_score / count
 
