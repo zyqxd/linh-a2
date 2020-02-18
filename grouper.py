@@ -332,8 +332,8 @@ class Grouping:
         # TODO: complete the body of this method
 
     def get_groups(self) -> List[Group]:
-        """ Return a list of all groups in this grouping. 
-        This list should be a shallow copy of the self._groups 
+        """ Return a list of all groups in this grouping.
+        This list should be a shallow copy of the self._groups
         attribute.
         """
         # TODO: complete the body of this method

@@ -78,7 +78,6 @@ class Question:
 
 
 class MultipleChoiceQuestion(Question):
-    # TODO: make this a child class of another class defined in this file
     """ A question whose answers can be one of several options
 
     === Public Attributes ===
@@ -361,6 +360,7 @@ class Answer:
 
     def is_valid(self, question: Question) -> bool:
         """Return True iff self.content is a valid answer to <question>"""
+        return question.validate_answer(self)
 
 
 class Survey:
