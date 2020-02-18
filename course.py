@@ -54,17 +54,22 @@ class Student:
     id: the id of the student
     name: the name of the student
 
+    === Private Attributes ===
+    _answers: a dictionary mapping of each question's id to the answer
+
     === Representation Invariants ===
     name is not the empty string
     """
 
     id: int
     name: str
+    _answers: Dict[int, Answer]
 
     def __init__(self, id_: int, name: str) -> None:
         """ Initialize a student with name <name> and id <id>"""
         self.id = id_
         self.name = name
+        self._answers = dict()
 
     def __str__(self) -> str:
         """ Return the name of this student """
@@ -75,21 +80,23 @@ class Student:
         Return True iff this student has an answer for a question with the same
         id as <question> and that answer is a valid answer for <question>.
         """
-        # TODO: complete the body of this method
+        if question.id in self._answers:
+            return True
+        else:
+            return False
 
     def set_answer(self, question: Question, answer: Answer) -> None:
         """
         Record this student's answer <answer> to the question <question>.
         """
-        self.question = question
-        self.answer = answer
+        self._answers[question.id] = answer
 
     def get_answer(self, question: Question) -> Optional[Answer]:
         """
         Return this student's answer to the question <question>. Return None if
         this student does not have an answer to <question>
         """
-        # TODO: complete the body of this method
+        return self._answers.get(question.id)
 
 
 class Course:
@@ -143,7 +150,11 @@ class Course:
         Return True iff all the students enrolled in this course have a valid
         answer for every question in <survey>.
         """
-        # TODO: complete the body of this method
+        for st in self.students:
+            for q in survey.get_questions():
+                if not st.has_answer(q):
+                    return False
+        return True
 
     def get_students(self) -> Tuple[Student, ...]:
         """
