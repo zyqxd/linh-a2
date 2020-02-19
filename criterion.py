@@ -53,6 +53,17 @@ class Criterion:
         """
         raise NotImplementedError
 
+    def check_answers(self, question: Question, answers: List[Answer]) -> None:
+        """
+        Takes a question and a list of answers, and check if they're all valid
+
+        Raise InvalidAnswerError if any answer in <answers> is not a valid
+        answer to <question>.
+        """
+        for answer in answers:
+            if not question.validate_answer(answer):
+                raise InvalidAnswerError
+
 
 class HomogeneousCriterion(Criterion):
     """
@@ -81,12 +92,13 @@ class HomogeneousCriterion(Criterion):
         len(answers) > 0
         """
 
-        # TODO: uncomment when is_valid is implemented
-        if len(answers) == 1: #&& answers[0].is_valid(question)
+        super().check_answers(question, answers)
+
+        if len(answers) == 1:
             return 0.0
 
-        count = 0
-        score = 0
+        count = 0.0
+        score = 0.0
         for [a, b] in combinations(answers):
             count += 1.0
             score += question.get_similarity(a, b)
@@ -119,8 +131,9 @@ class HeterogeneousCriterion(HomogeneousCriterion):
         len(answers) > 0
         """
 
-        # TODO: uncomment when is_valid is implemented
-        if len(answers) == 1: #&& answers[0].is_valid(question)
+        super().check_answers(question, answers)
+
+        if len(answers) == 1:
             return 0.0
 
         return 1.0 - super().score_answers(question, answers)
@@ -150,9 +163,11 @@ class LonelyMemberCriterion(Criterion):
         len(answers) > 0
         """
 
+        super().check_answers(question, answers)
+
         for [a, b] in combinations(answers):
             # if any combination is the same, we return 0
-            if question.get_similarity(a, b):
+            if a.content == b.content:
                 return 0.0
 
         # all combination has passed, yet nothing returned, so all unique
