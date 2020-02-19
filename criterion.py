@@ -105,6 +105,7 @@ class HomogeneousCriterion(Criterion):
 
         return score / count
 
+
 class HeterogeneousCriterion(HomogeneousCriterion):
     """ A criterion used to evaluate the quality of a group based on the group
     members' answers for a given question.
@@ -137,6 +138,7 @@ class HeterogeneousCriterion(HomogeneousCriterion):
             return 0.0
 
         return 1.0 - super().score_answers(question, answers)
+
 
 class LonelyMemberCriterion(Criterion):
     """ A criterion used to measure the quality of a group of students
@@ -172,10 +174,13 @@ class LonelyMemberCriterion(Criterion):
         return 1.0
 
 # TODO this needs a test
+
+
 def combinations(answers: List[Answer]) -> List[List[Answer]]:
     for i, v1 in enumerate(answers):
         for j in range(i+1, len(answers)):
             yield [v1, answers[j]]
+
 
 if __name__ == '__main__':
     import python_ta

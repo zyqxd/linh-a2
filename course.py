@@ -23,7 +23,7 @@ This file contains classes that describe a university course and the students
 who are enrolled in these courses.
 """
 from __future__ import annotations
-from typing import TYPE_CHECKING, List, Tuple, Optional
+from typing import TYPE_CHECKING, List, Tuple, Optional, Dict
 if TYPE_CHECKING:
     from survey import Answer, Survey, Question
 
@@ -122,7 +122,6 @@ class Course:
         self.name = name
         self.students = []
 
-
     def enroll_students(self, students: List[Student]) -> None:
         """
         Enroll all students in <students> in this course.
@@ -131,7 +130,8 @@ class Course:
         do not add any of the students in <students> to the course.
         """
         for st in students:
-            if st.name == '': return
+            if st.name == '':
+                return
 
         for i1, st1 in enumerate(students):
 
@@ -143,7 +143,6 @@ class Course:
 
                     return
         self.students.extend(students)
-
 
     def all_answered(self, survey: Survey) -> bool:
         """
@@ -167,6 +166,7 @@ class Course:
         """
         result = sort_students(self.students, 'id')
         return tuple(result)
+
 
 if __name__ == '__main__':
     import python_ta

@@ -163,10 +163,9 @@ class NumericQuestion(Question):
         === Precondition ===
         min_ < max_
         """
-        Question.__init__(self,id_,text)
+        Question.__init__(self, id_, text)
         self._min = min_
         self._max = max_
-
 
     def __str__(self) -> str:
         """
@@ -210,10 +209,9 @@ class NumericQuestion(Question):
         === Precondition ===
         <answer1> and <answer2> are both valid answers to this question
         """
-        d1 = abs(answer1.content -  answer2.content)
+        d1 = abs(answer1.content - answer2.content)
         d2 = d1 / (self._max - self._min)
         return 1.0 - d2
-
 
 
 class YesNoQuestion(Question):
@@ -317,7 +315,6 @@ class CheckboxQuestion(MultipleChoiceQuestion):
                 return False
         return True
 
-
     def get_similarity(self, answer1: Answer, answer2: Answer) -> float:
         """
         Return the similarity between <answer1> and <answer2>.
@@ -403,7 +400,6 @@ class Survey:
         self._default_weight = 1
         self._criteria = dict()
         self._weights = dict()
-
 
     def __len__(self) -> int:
         """ Return the number of questions in this survey """

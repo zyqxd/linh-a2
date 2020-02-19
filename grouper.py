@@ -131,9 +131,9 @@ class AlphaGrouper(Grouper):
         """
         sorted_students = sort_students(course.students, 'name')
         grouped_students = slice_list(sorted_students, self.group_size)
-        grouping = Grouping();
+        grouping = Grouping()
         for group in grouped_students:
-           grouping.add_group(Group(group))
+            grouping.add_group(Group(group))
 
         return grouping
 
@@ -166,9 +166,9 @@ class RandomGrouper(Grouper):
         students = list(course.get_students())
         random.shuffle(students)
         grouped_students = slice_list(students, self.group_size)
-        grouping = Grouping();
+        grouping = Grouping()
         for group in grouped_students:
-           grouping.add_group(Group(group))
+            grouping.add_group(Group(group))
 
         return grouping
 
@@ -219,13 +219,13 @@ class GreedyGrouper(Grouper):
             st = students_list.pop(0)
             group_students = [st]
 
-            for i in range(1, self.group_size):
+            for _ in range(1, self.group_size):
                 # Find a list of tuples of (student, score)
                 scores = [(other_st, survey.score_students(group_students + [other_st]))
-                            for j, other_st in enumerate(students_list)]
+                          for j, other_st in enumerate(students_list)]
 
                 # Find max student
-                (max_st, max_score) = max(scores, key=lambda item:item[1])
+                (max_st, _) = max(scores, key=lambda item: item[1])
 
                 # Then add it (also remove from original list)
                 students_list.remove(max_st)
@@ -234,6 +234,7 @@ class GreedyGrouper(Grouper):
             return_grouping.add_group(Group(group_students))
 
         return return_grouping
+
 
 class WindowGrouper(Grouper):
     """
@@ -283,7 +284,8 @@ class WindowGrouper(Grouper):
         # While we still have windows, loop
         while len(students_list) > 0:
             # Find local max window
-            local_max_window = self.find_local_max_window(students_list, survey)
+            local_max_window = self.find_local_max_window(
+                students_list, survey)
             # add window as new group into grouping
             return_grouping.add_group(Group(local_max_window))
             # remove window's elements
