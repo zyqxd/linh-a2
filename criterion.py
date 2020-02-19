@@ -165,12 +165,10 @@ class LonelyMemberCriterion(Criterion):
 
         super().check_answers(question, answers)
 
-        for [a, b] in combinations(answers):
-            # if any combination is the same, we return 0
-            if a.content == b.content:
+        answers_content = [a.content for a in answers]
+        for ans in answers_content:
+            if answers_content.count(ans) == 1:
                 return 0.0
-
-        # all combination has passed, yet nothing returned, so all unique
         return 1.0
 
 # TODO this needs a test

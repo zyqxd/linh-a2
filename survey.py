@@ -217,7 +217,6 @@ class NumericQuestion(Question):
 
 
 class YesNoQuestion(Question):
-    # TODO: make this a child class of another class defined in this file
     """ A question whose answer is either yes (represented by True) or
     no (represented by False).
 
@@ -268,7 +267,6 @@ class YesNoQuestion(Question):
 
 
 class CheckboxQuestion(MultipleChoiceQuestion):
-    # TODO: make this a child class of another class defined in this file
     """ A question whose answers can be one or more of several options
 
     === Public Attributes ===
@@ -514,27 +512,24 @@ class Survey:
             survey
         """
 
-        # TODO Catch error thrown by criteria classes
+        if len(self._questions) == 0:
+            return 0.0
 
-        print(f'getting score for {[st.id for st in students]}')
-        sum_score = 0
-        count = 0
+        try:
+            sum_score = 0
+            count = 0
 
-        for q in self._questions:
-            print('=======')
-            criterion = self._get_criterion(q)
-            weight = self._get_weight(q)
-            print(f'criterion = {criterion}')
-            answers = [st.get_answer(q) for st in students]
-            score = criterion.score_answers(q, answers)
-            sum_score += score * weight
-            count += 1
+            for q in self._questions:
+                criterion = self._get_criterion(q)
+                weight = self._get_weight(q)
+                answers = [st.get_answer(q) for st in students]
+                score = criterion.score_answers(q, answers)
+                sum_score += score * weight
+                count += 1
 
-            print(f'score = {score}')
-            print(f'weight = {weight}')
-            print(f'sum_score = {sum_score}')
-
-        return sum_score / count
+            return sum_score / count
+        except InvalidAnswerError:
+            return 0.0
 
     def score_grouping(self, grouping: Grouping) -> float:
         """ Return a score for <grouping> calculated based on the answers of

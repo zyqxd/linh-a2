@@ -214,31 +214,23 @@ class GreedyGrouper(Grouper):
         """
         students_list = list(course.get_students())
         return_grouping = Grouping()
-        print(f'students = {students_list}')
-        print(f'group_size = {self.group_size}')
 
         while len(students_list) > 0:
             st = students_list.pop(0)
-            print(f'poping {st} from list')
             group_students = [st]
 
             for i in range(1, self.group_size):
-                print(f'running inner for loop {i}')
-                # Find a list of tuples of (student, score) from left over
+                # Find a list of tuples of (student, score)
                 scores = [(other_st, survey.score_students(group_students + [other_st]))
                             for j, other_st in enumerate(students_list)]
-                print([(st.id, score) for (st, score) in scores])
 
                 # Find max student
                 (max_st, max_score) = max(scores, key=lambda item:item[1])
-                print(max_score)
 
                 # Then add it (also remove from original list)
-
                 students_list.remove(max_st)
                 group_students.append(max_st)
 
-            print(f'final group {[st.id for st in group_students]}')
             return_grouping.add_group(Group(group_students))
 
         return return_grouping
@@ -285,7 +277,35 @@ class WindowGrouper(Grouper):
         after repeating steps 1 and 2 above, put the remaining students into a
         new group.
         """
-        # TODO: complete the body of this method
+        students_list = sort_students(list(course.get_students()), 'id')
+        return_grouping = Grouping()
+
+        # While we still have windows, loop
+        while len(students_list) > 0:
+            # Find local max window
+            local_max_window = self.find_local_max_window(students_list, survey)
+            # add window as new group into grouping
+            return_grouping.add_group(Group(local_max_window))
+            # remove window's elements
+            for st in local_max_window:
+                students_list.remove(st)
+
+        return return_grouping
+
+    def find_local_max_window(self, students_list: List[Student], survey: Survey) -> List[Student]:
+        """
+        Find the first window of size group_size with the highest score before
+        and after
+        """
+        student_windows = windows(students_list, self.group_size)
+        # For each window and index
+        for i, window in enumerate(student_windows):
+            # If we're at last window, this has to be max
+            if i == len(student_windows) - 1:
+                return window
+            # Check score of current window and next one
+            if survey.score_students(window) > survey.score_students(student_windows[i+1]):
+                return window
 
 
 class Group:
